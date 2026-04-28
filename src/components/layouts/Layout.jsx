@@ -2,18 +2,19 @@ import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar"
 import Dashboard from "../..//pages/Dashboard/DashboardPage";
+import { useToggle } from "../../hooks/useToggle";
 
 const Layout = () => {
 
-    const [collapsed, setCollapsed] = useState(false);
+    const [toggle, value] = useToggle(false);
 
     return (
         <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-slate-950">
-            <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
+            <Sidebar collapsed={value} setCollapsed={toggle} />
             <div className="flex flex-col flex-1 overflow-hidden">
                 <TopBar />
                 <main className="flex-1 overflow-y-auto">
-                    <Dashboard collapsed={collapsed} />
+                    <Dashboard />
                 </main>
             </div>
         </div>

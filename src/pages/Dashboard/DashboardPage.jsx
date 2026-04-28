@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import RecentProduct from "../../components/ui/RecentProduct";
 import StatCard from "../../components/ui/StatCard";
+import { getProduct } from "../../api/mockApi";
+import LowStock from "../../components/ui/LowStock";
 
 export default function Dashboard({ collapsed }) {
+
+    const [products, setProducts] = useState([]);
+
     console.log("Dashboard", collapsed)
     const statValues = [
         {
@@ -28,6 +33,12 @@ export default function Dashboard({ collapsed }) {
         },
     ];
 
+    useEffect(() => {
+        getProduct.getAll().then(values => {
+            setProducts(values)
+        });
+    }, [])
+
     return (
         <div className="page">
             <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
@@ -40,7 +51,21 @@ export default function Dashboard({ collapsed }) {
                     />
                 })}
             </div>
-            <RecentProduct />
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <div className="xl:col-span-2 card">
+                    <div className="card-header">
+                        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                            Recent Products
+                        </h2>
+                    </div>
+                    <div className="p-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        {products.map((value, ind) => {
+                            return <RecentProduct key={ind} productTitle={value.name} price={value.price} img={value.image} />
+                        })}
+                    </div>
+                </div>
+                <LowStock />
+            </div>
         </div>
     )
 }
