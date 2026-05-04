@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { LayoutDashboard, Package, ShoppingBag, ChevronLeft, LogOut, ChevronRight } from "lucide-react";
 
 const Sidebar = ({ collapsed, setCollapsed }) => {
-    console.log("collapsed", collapsed)
+
     return (
         <aside className={`${collapsed ? "w-16" : "w-60"} bg-slate-900 flex flex-col flex-shrink-0 translate-all duration-300`}>
             <div className={`flex items-center h-16 px-4 border-b border-slate-800  ${collapsed ? "justify-center" : "gap-3"}`}>

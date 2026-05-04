@@ -5,11 +5,10 @@ import StatCard from "../../components/ui/StatCard";
 import { getProduct } from "../../api/mockApi";
 import LowStock from "../../components/ui/LowStock";
 
-export default function Dashboard({ collapsed }) {
+export default function Dashboard() {
 
     const [products, setProducts] = useState([]);
 
-    console.log("Dashboard", collapsed)
     const statValues = [
         {
             label: "Revenue",
