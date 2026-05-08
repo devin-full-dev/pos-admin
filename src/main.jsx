@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import Layout from "./components/layouts/Layout"
 import { ThemeProvider } from "./context/ThemeContext"
+import LoginPage from "./pages/auth/LoginPage"
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LayoutDashboard, Package, ShoppingBag, ChevronLeft, LogOut, ChevronRight } from "lucide-react";
 
-const Sidebar = ({ collapsed, setCollapsed }) => {
+const Sidebar = ({ collapsed, setCollapsed, logout, user }) => {
 
     return (
         <aside className={`${collapsed ? "w-16" : "w-60"} bg-slate-900 flex flex-col flex-shrink-0 translate-all duration-300`}>
@@ -38,11 +38,14 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
                         A
                     </div>
                     <div className="min-w-0">
-                        <p className="text-white text-xs font-medium truncate">Admin</p>
-                        <p className="text-slate-500 text-xs truncate">ADMIN</p>
+                        <p className="text-white text-xs font-medium truncate">{user.username}</p>
+                        <p className="text-slate-500 text-xs truncate">{user.role}</p>
                     </div>
                 </div>
-                <button className="nav-item w-full text-slate-400 hover:text-red-400 hover:bg-red-900/20">
+                <button
+                    className="nav-item w-full text-slate-400 hover:text-red-400 hover:bg-red-900/20"
+                    onClick={logout}
+                >
                     <LogOut size={16} />
                     {!collapsed && (<span>Logout</span>)}
                 </button>
