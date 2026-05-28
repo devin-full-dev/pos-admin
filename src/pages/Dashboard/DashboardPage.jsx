@@ -4,10 +4,9 @@ import RecentProduct from "../../components/ui/RecentProduct";
 import StatCard from "../../components/ui/StatCard";
 import { getProduct } from "../../api/mockApi";
 import LowStock from "../../components/ui/LowStock";
+import { PRODUCTS } from "../../data/products";
 
 export default function Dashboard() {
-
-    const [products, setProducts] = useState([]);
 
     const statValues = [
         {
@@ -32,34 +31,37 @@ export default function Dashboard() {
         },
     ];
 
-    useEffect(() => {
-        getProduct.getAll().then(values => {
-            setProducts(values)
-        });
-    }, [])
-
     return (
         <div className="page">
             <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-                {statValues.map((value, ind) => {
-                    return <StatCard
-                        key={ind}
-                        label={value.label}
-                        value={value.value}
-                        statValue={value.statValue}
-                    />
+                {statValues.map((val, ind) => {
+                    return (
+                        <StatCard
+                            key={ind}
+                            label={val.label}
+                            value={val.value}
+                            statValue={val.statValue}
+                        />
+                    )
                 })}
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <div className="xl:col-span-2 card">
                     <div className="card-header">
-                        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                            Recent Products
+                        <h2 className="text-sx font-semibold text-gray-900 dark:text-gray-100">
+                            Recent Product
                         </h2>
                     </div>
                     <div className="p-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                        {products.map((value, ind) => {
-                            return <RecentProduct key={ind} productTitle={value.name} price={value.price} img={value.image} />
+                        {PRODUCTS.map((val, idx) => {
+                            return (
+                                <RecentProduct
+                                    key={idx}
+                                    productTitle={val.name}
+                                    price={val.price}
+                                    img={val.image}
+                                />
+                            )
                         })}
                     </div>
                 </div>
