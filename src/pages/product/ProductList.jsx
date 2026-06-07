@@ -1,24 +1,58 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { PRODUCTS } from "../../data/products";
 import { Filter, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import ProductImage from "../product/ProductImage";
 import Pagination from '../../components/ui/Pagination';
 import { CATEGORIES } from '../../constants/product';
-import { productService } from "../../services/productService";
+import { useDeleteProduct, useProductListing } from '../../hooks/useProduct';
+import ProductForm from './ProductForm'
+import Modal from "../../components/ui/Modal";
+import ConfirmModal from "../../components/ui/ConfirmModal";
 
 function ProductList() {
 
-    const [categoryFilter, setCategoryFilter] = useState("All");
-    const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
-    const [data, setData] = useState();
+    const [search, setSearch] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('');
+    const [modal, setModal] = useState({ open: false, product: null });
+
+    const [deleteId, setDeleteId] = useState(null);
+    const deleteProduct = useDeleteProduct();
+
+    const { data, isLoading } = useProductListing({ search, category: categoryFilter, page });
+    const list = data?.content ?? [];
+    const totalPages = data?.totalPages ?? 1;
 
     const handleCategoryFilter = (cat) => {
         setCategoryFilter(cat);
+        setPage(1);
     }
 
-    console.log("products =>>>", data)
+    const handleSearch = (value) => {
+        setSearch(value);
+        setPage(1);
+    }
+
+    const openEdit = useCallback((val) => {
+        setModal({ open: true, product: val })
+    }, []);
+
+    const handleOpenModal = useCallback(() => {
+        setModal({ open: true, product: null })
+    }, [])
+
+    const handleCloseModal = useCallback(() => {
+        setModal({ open: false, product: null })
+    }, [])
+
+    const stockBadge = (stock) => {
+        if (stock == 0) return <span className="badge-red">OUT of Stock !</span>
+        if (stock <= 6) return <span className="badge-amber">Low: {stock}</span>
+        return <span className="badge-green">{stock}</span>
+    }
+
+    console.log("dďfadafasfsa", deleteId, !!deleteId)
 
     return (
         <div className="page">
@@ -27,7 +61,10 @@ function ProductList() {
                 <h1 className="page-title">
                     Products
                 </h1>
-                <button className="btn-primary">
+                <button
+                    className="btn-primary"
+                    onClick={handleOpenModal}
+                >
                     <Plus size={16} /> Add Product
                 </button>
             </div>
@@ -39,8 +76,8 @@ function ProductList() {
                     <input
                         className="input pl-8 w-56"
                         placeholder="Search Products ..."
-                        value={""}
-                        onChange={null}
+                        value={search}
+                        onChange={(e) => handleSearch(e.target.value)}
                     />
                 </div>
                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -82,57 +119,90 @@ function ProductList() {
                             </tr>
                         </thead>
                         <tbody>
-                            {data}
-                            <tr>
-                                <td>
-                                    <div className="flex items-center gap-2.5">
-                                        <ProductImage
-                                            src={null}
-                                            name="Cocacola"
-                                            className={"w-8 h-8 rounded-lg text-sm flex-shrink-0"}
-                                        />
-                                        <span className="font-medium text-gray-900 dark:text-gray-100">
-                                            Cocacola
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span className="badge-blue">
-                                        Drink
-                                    </span>
-                                </td>
-                                <td className="font-semibold text-primary-600 dark:text-primary-400">
-                                    $0.5
-                                </td>
-                                <td className="text-text-gray-500 dark:text-slate-400">
-                                    $0.25
-                                </td>
-                                <td>
-                                    Low: 2
-                                </td>
-                                <td>
-                                    <span className="badge-green">
-                                        Active
-                                    </span>
-                                </td>
-                                <td>
-                                    <div className="flex items-center justify-end gap-1">
-                                        <button className="btn-ghost p-1.5 rounded-lg text-gray-400 hover:text-primary-600">
-                                            <Pencil size={14} />
-                                        </button>
-                                        <button className="btn-ghost p-1.5 rounded-lg text-gray-400 hover:text-red-400">
-                                            <Trash2 size={14} />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            {list.map((item) => {
+                                return (
+                                    <tr key={item.id}>
+                                        <td>
+                                            <div className="flex items-center gap-2.5">
+                                                <ProductImage
+                                                    src={item?.image}
+                                                    name={item.name}
+                                                    className={"w-8 h-8 rounded-lg text-sm flex-shrink-0"}
+                                                />
+                                                <span className="font-medium text-gray-900 dark:text-gray-100">
+                                                    {item.name}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span className="badge-blue">
+                                                {item?.category}
+                                            </span>
+                                        </td>
+                                        <td className="font-semibold text-primary-600 dark:text-primary-400">
+                                            ${item?.price.toFixed(2)}
+                                        </td>
+                                        <td className="text-text-gray-500 dark:text-slate-400">
+                                            ${item?.cost.toFixed(2)}
+                                        </td>
+                                        <td>
+                                            {stockBadge(item?.stock)}
+                                        </td>
+                                        <td>
+                                            <span className={`${item?.status === 'active' ? 'badge-green' : 'badge-gray'}`}>
+                                                {item?.status.toUpperCase()}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div className="flex items-center justify-end gap-1">
+                                                <button
+                                                    onClick={() => openEdit(item)}
+                                                    className="btn-ghost p-1.5 rounded-lg text-gray-400 hover:text-primary-600"
+                                                >
+                                                    <Pencil size={14} /> Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => setDeleteId(item?.id)}
+                                                    className="btn-ghost p-1.5 rounded-lg text-gray-400 hover:text-red-400"
+                                                >
+                                                    <Trash2 size={14} /> Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                         </tbody>
                     </table>
                 </div>
                 <div className="px-3 py-3 border-t border-gray-50 dark:border-x-slate-800">
-                    <Pagination />
+                    <Pagination
+                        page={page}
+                        totalPages={totalPages}
+                        onGoTo={setPage}
+                    />
                 </div>
             </div>
+            <Modal
+                open={modal.open}
+                onClose={handleCloseModal}
+                title={modal.product ? 'Edit Product' : 'Add Product'}
+            >
+                <ProductForm product={modal.product} onClose={handleCloseModal} />
+            </Modal>
+
+            <ConfirmModal
+                open={!!deleteId}
+                onClose={() => setDeleteId(null)}
+                onConfirm={() => {
+                    deleteProduct.mutate(deleteId);
+                    setDeleteId(null)
+                }}
+                title="Delete Product"
+                message="Are you sure want to delete this product? This can not be undone!"
+                loading={deleteProduct.isPending}
+            />
+
         </div>
     )
 }

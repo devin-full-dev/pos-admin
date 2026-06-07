@@ -12,7 +12,7 @@ api.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
     console.log("config:", config, token)
     if (token) {
-        config.headers.Authorization = `Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBwb3MuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgwNDA0NjM0LCJleHAiOjE3ODA0OTEwMzR9.7ppHvWGYFGzS5dtV6nIS18X34KybqsW1v2syMQoexV6aChEqrEW-t7uJc3B2Sbmh`
+        config.headers.Authorization = `Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBwb3MuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgwNzYwMzYxLCJleHAiOjE3ODA4NDY3NjF9.kYNHiPrexDo5hhZ32t5_9YMRRnpz7aRA1Ogqji8kdd8zORPZikMoySQK3cBAz5Ig`
     }
     return config;
 })

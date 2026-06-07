@@ -6,7 +6,7 @@ import Layout from "../components/layouts/Layout";
 import Dashboard from "../pages/Dashboard/DashboardPage";
 import POSPage from "../pages/pos/POSPage";
 import ProductList from "../pages/product/ProductList";
-import ProductDetails from "../pages/product/ProductDetails"
+// import ProductDetails from "../pages/product/ProductDetails"
 
 export default function AppRouter() {
 
@@ -27,7 +27,7 @@ export default function AppRouter() {
                     <Route index element={<Dashboard />} />
                     <Route path="/pos" element={<POSPage />} />
                     <Route path="/products" element={<ProductList />} />
-                    <Route path="/products/details/:id" element={<ProductDetails />} />
+                    {/* <Route path="/products/details/:id" element={<ProductDetails />} /> */}
                 </Route>
             </Routes>
         </Router>
