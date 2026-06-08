@@ -1,17 +1,18 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/useAuthStore"
 
 const LoginPage = () => {
 
-    const { login } = useAuthStore()
+    const { login, loading } = useAuthStore()
+    const navigate = useNavigate();
 
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setSetPassword] = useState('');
     const [validationError, setValidationError] = useState({});
-    const [loading, setLoading] = useState(false);
-
+    const [errors, setErrors] = useState('')
     const handleOnChangeUsername = (e) => {
-        setUsername(e.target.value);
+        setEmail(e.target.value);
         setValidationError({});
     }
 
@@ -23,8 +24,8 @@ const LoginPage = () => {
     const handleLogin = async () => {
 
         const errors = {};
-        if (username === '') {
-            errors.username = "Please Input Username!";
+        if (email === '') {
+            errors.email = "Please Input Email!";
         }
         if (password === '') {
             errors.password = "Please Input Password";
@@ -35,18 +36,13 @@ const LoginPage = () => {
             return;
         }
 
-        console.log("error", errors, "Error length", Object.keys(errors), Object.keys(errors).length)
-
-        setLoading(true);
-        await new Promise(r => setTimeout(r, 1800))
-
-        const response = login(username, password);
+        const response = login(email, password);
         if (response.success) {
-            setLoading(false)
+            navigate('/')
+        } else {
+            setErrors(response?.message || '')
         }
     }
-
-    console.log("errors", validationError, username, password);
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center">
@@ -72,12 +68,12 @@ const LoginPage = () => {
                     <input
                         className="input"
                         type="text"
-                        name="username"
+                        name="email"
                         placeholder="Please Enter Username"
                         onChange={(e) => handleOnChangeUsername(e)}
                     />
-                    {validationError.username && (
-                        <p className="text-red-400 text-sm">{validationError.username}</p>
+                    {validationError.email && (
+                        <p className="text-red-400 text-sm">{validationError.email}</p>
                     )}
                 </div>
                 <div className="mb-4">

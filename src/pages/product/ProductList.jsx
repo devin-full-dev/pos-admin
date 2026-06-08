@@ -52,7 +52,7 @@ function ProductList() {
         return <span className="badge-green">{stock}</span>
     }
 
-    console.log("dďfadafasfsa", deleteId, !!deleteId)
+    console.log("list", list)
 
     return (
         <div className="page">

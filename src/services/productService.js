@@ -30,23 +30,16 @@ export const productService = {
         return id;
     },
     get: () => { },
-    search: async ({ search = '', category = '', page = 0, size = 10 } = {}) => {
-        const params = new URLSearchParams({ page, size, sort: 'name,asc' });
-        if (search) {
-            params.set('search', search);
-        }
-        if (category) params.set('category', category)
-        const response = await api.get(`/api/products?${params}`); // Sample  => api/products?search=coca&category=all&page=0&size=10&sort=name%2Casc
-        console.log("RESPONSE ----", response)
-        if (response?.data !== undefined) {
-            return response?.data
-        }
+    search: async ({ search = '', filter = '', page = 0, size = 10 }) => {
+        const params = new URLSearchParams({ page, size, sort: 'name,asc' })
+        if (search) params.set('search', search)
+        if (filter && filter.toLowerCase() !== "all") params.set('category', filter)
 
-        const content = Array.isArray(response) ? response : [];
-        return {
-            content,
-            totalPages: 1,
-            totalElement: content.length
-        }
+        const res = await api.get(`/api/products?${params}`)
+
+        // res = full axios response, data is in res.data
+        const data = res.data
+        if (data && data.content) return data
+        return { content: [], totalPages: 1, totalElements: 0 }
     },
 }

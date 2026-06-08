@@ -10,11 +10,23 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
-    console.log("config:", config, token)
     if (token) {
-        config.headers.Authorization = `Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBwb3MuY29tIiwicm9sZSI6IkFETUlOIiwiaWF0IjoxNzgwNzYwMzYxLCJleHAiOjE3ODA4NDY3NjF9.kYNHiPrexDo5hhZ32t5_9YMRRnpz7aRA1Ogqji8kdd8zORPZikMoySQK3cBAz5Ig`
+        config.headers.Authorization = `Bearer ${token}`
     }
     return config;
 })
+
+// Token Expired
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href("/login");
+        }
+        return Promise.reject(error);
+    }
+)
 
 export default api;

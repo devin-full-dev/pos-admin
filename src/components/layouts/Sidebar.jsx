@@ -54,7 +54,7 @@ const Sidebar = ({ collapsed, setCollapsed }) => {
                         A
                     </div>
                     <div className="min-w-0">
-                        <p className="text-white text-xs font-medium truncate">{user?.username}</p>
+                        <p className="text-white text-xs font-medium truncate">{user?.email}</p>
                         <p className="text-slate-500 text-xs truncate">{user?.role}</p>
                     </div>
                 </div>
