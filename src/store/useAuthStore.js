@@ -10,8 +10,6 @@ const useAuthStore = create((set) => ({
         set({ loading: true })
         try {
             const data = await authService.login(email, password);
-            console.log("dddsdsdsdsds", data)
-
             const token = data.token || data.accessToken;
             const user = data?.user || {
                 email: data?.email,
